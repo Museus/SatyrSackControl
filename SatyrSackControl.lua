@@ -14,58 +14,19 @@ local config = {
 }
 SatyrSackControl.config = config
 
--- Show a warning below IGT that the game has been modded
-function ShowModdedWarning()
-    local obstacleName = "ModdedGame"
-    local text_config_table = DeepCopyTable(UIData.CurrentRunDepth.TextFormat)
-    local x_pos = 1950
-    local y_pos = 100
-
-    -- If this anchor was already created, just modify the existing textbox
-    if ScreenAnchors[obstacleName] ~= nil then
-        ModifyTextBox({
-            Id = ScreenAnchors[obstacleName],
-            Text = text
-        })
-    else -- create a new anchor/textbox and fade it in
-        ScreenAnchors[obstacleName] = CreateScreenObstacle({
-            Name = "BlankObstacle",
-            X = x_pos,
-            Y = y_pos,
-            Group = "Combat_Menu_Overlay"
-        })
-
-        CreateTextBox(
-            MergeTables(
-                text_config_table,
-                {
-                    Id = ScreenAnchors[obstacleName],
-                    Text = "MODDED GAME"
-                }
-            )
-        )
-
-        ModifyTextBox({
-            Id = ScreenAnchors[obstacleName],
-            FadeTarget = 1,
-            FadeDuration = 0.0
-        })
-    end
-end
-
 -- Scripts/RoomManager.lua : 1874
 ModUtil.WrapBaseFunction("StartRoom", function ( baseFunc, currentRun, currentRoom )
-    ShowModdedWarning()
+    PrintUtil.showModdedWarning()
 
     baseFunc(currentRun, currentRoom)
-end, ShowChamberNumber)
+end, SatyrSackControl)
 
 -- Scripts/UIScripts.lua : 145
 ModUtil.WrapBaseFunction("ShowCombatUI", function ( baseFunc, flag )
-    ShowModdedWarning()
+    PrintUtil.showModdedWarning()
 
     baseFunc(flag)
-end, ShowChamberNumber)
+end, SatyrSackControl)
 
 -- Scripts/RunManager.lua : 591
 ModUtil.BaseOverride("IsRoomForced", function(currentRun, currentRoom, nextRoomData, args)
